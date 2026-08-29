@@ -1,0 +1,53 @@
+name: SCRATCH - SARIF truncation check (temporary, will be deleted)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  truncated-sarif-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write a deliberately truncated SARIF file
+        run: |
+          # Simulates a process that was killed mid-write: valid SARIF header,
+          # cut off partway through the results array - not valid JSON.
+          cat > truncated.sarif << 'SARIFEOF'
+          {
+            "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+            "version": "2.1.0",
+            "runs": [
+              {
+                "tool": {
+                  "driver": {
+                    "name": "Zenzic",
+                    "informationUri": "https://zenzic.dev",
+                    "rules": []
+                  }
+                },
+                "results": [
+                  {
+                    "ruleId": "Z101",
+                    "level": "error",
+                    "message": {
+                      "text": "Broken link
+          SARIFEOF
+          echo "--- truncated.sarif written, byte count: $(wc -c < truncated.sarif) ---"
+          echo "--- validity check (expect failure) ---"
+          python3 -c "import json; json.load(open('truncated.sarif'))" || echo "CONFIRMED: not valid JSON"
+
+      - name: Upload SARIF to GitHub Code Scanning (real codeql-action, same version zenzic-action uses)
+        id: sarif_upload
+        uses: github/codeql-action/upload-sarif@7c1e4cf0b20d7c1872b26569c00ba908797a59bf # v4
+        continue-on-error: true
+        with:
+          sarif_file: truncated.sarif
+          category: scratch-truncation-test
+
+      - name: Report the real outcome
+        run: |
+          echo "upload-sarif step outcome: ${{ steps.sarif_upload.outcome }}"
+          echo "upload-sarif step conclusion: ${{ steps.sarif_upload.conclusion }}"
