@@ -1,5 +1,10 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
+#
+# First live run after the repository went public and ENABLE_CODEQL was set
+# (2026-08-30) -- previously the repo was private, which requires GitHub
+# Advanced Security for Actions-based code scanning; now public, scanning
+# works the same way as zenzic/zenzic-action/zenzic-vscode.
 
 name: Zenzic MCP CodeQL
 
