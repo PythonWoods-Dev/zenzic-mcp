@@ -1,0 +1,64 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+
+[project]
+name = "zenzic-mcp"
+version = "0.1.0"
+description = "Model Context Protocol server exposing the Zenzic Deterministic Document Integrity Engine to LLM agents."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [
+    { name = "PythonWoods", email = "dev@pythonwoods.dev" },
+]
+dependencies = [
+    "mcp>=1.2.0",
+    "zenzic~=0.31",
+]
+
+[project.scripts]
+zenzic-mcp = "zenzic_mcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/zenzic_mcp"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "mypy>=1.13",
+    "ruff>=0.8",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+
+[[tool.mypy.overrides]]
+# ServerRequestContext is a real, usable public class in this mcp SDK
+# release, but the module omits it from __all__, so --strict's implicit
+# no-implicit-reexport treats importing it as an error — an SDK packaging
+# gap, not something this project's code can fix.
+module = "mcp.server.runner"
+implicit_reexport = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.uv.sources]
+# Local dev only: resolves the zenzic~=0.31 constraint above against the
+# sibling checkout instead of PyPI, since v0.31.0 is not tagged/released yet.
+# Remove once zenzic v0.31.0 ships to PyPI.
+zenzic = { path = "../zenzic", editable = true }
