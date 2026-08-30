@@ -18,6 +18,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from zenzic.core.adapters import get_adapter
+from zenzic.core.adapters._factory import clear_adapter_cache
 from zenzic.core.codes import NON_SUPPRESSIBLE_CODES
 from zenzic.core.discovery import iter_markdown_sources
 from zenzic.core.exclusion import LayeredExclusionManager
@@ -90,6 +91,15 @@ def check_document(repo_root: Path, target: Path) -> list[ZenzicDiagnostic]:
     dangling references and topology), then returns only the diagnostics for
     *target* — never the full per-URI mapping for the whole site (Invariant 1).
 
+    Clears Core's process-lifetime adapter cache (``get_adapter()``, keyed by
+    ``(engine, docs_root, repo_root)``) before use. That cache exists to avoid
+    redundant construction across multiple CLI-session callers — a rationale
+    that does not apply here, since this function is the only caller in the
+    process and already rebuilds everything else from scratch every call. Left
+    uncleared, a long-running MCP server process could otherwise keep serving
+    an adapter built from a now-stale ``mkdocs.yml``/``.zenzic.toml`` for its
+    entire lifetime, contradicting this function's own stateless contract.
+
     Args:
         repo_root: Absolute path to the repository root.
         target: Absolute path to the Markdown file to check.
@@ -104,6 +114,7 @@ def check_document(repo_root: Path, target: Path) -> list[ZenzicDiagnostic]:
     """
     from zenzic.models.config import load_config_with_diagnostics
 
+    clear_adapter_cache()
     config, _ = load_config_with_diagnostics(repo_root)
     config = config or ZenzicConfig()
     docs_root = (repo_root / config.docs_dir).resolve()

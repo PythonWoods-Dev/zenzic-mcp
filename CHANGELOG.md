@@ -44,13 +44,15 @@ see `.claude/state/01-manifest.md` for the versioning model.
 - **Missing `LICENSE` File**: `pyproject.toml` already declared `license = "Apache-2.0"`, but no `LICENSE` file existed in the repository, unlike the sibling `zenzic`/`zenzic-action`/`zenzic-vscode` repos. Added the standard Apache-2.0 text with matching copyright line.
 - **`check_document`'s Tool Handler Only Caught `DocumentNotFoundError` — Any Other Exception Propagated Unhandled Past the MCP Wire Boundary**:
   - Confirmed live with a real, natural failure mode (not a synthetic one): a project declaring `engine = "zensical"` in `.zenzic.toml` with neither `zensical.toml` nor `mkdocs.yml` present raises a real `zenzic.core.exceptions.ZenzicConfigError` from `check_document()`. Traced the real MCP SDK behavior for this case, which the original finding had left undetermined: the server process itself does not crash, but the exception leaks past the tool handler as a raw client-side `MCPError` instead of a controlled `CallToolResult(is_error=True)`. Added a catch-all `except Exception` around the `check_document()` call, matching the existing `DocumentNotFoundError` branch's shape. TDD-first: `tests/test_exception_handling.py`, confirmed genuinely red (the uncaught `ZenzicConfigError` surfaced as an `MCPError` on the client side) before the fix, green after.
+- **`check_document` Could Serve a Stale Adapter After a `mkdocs.yml`/`.zenzic.toml` Edit, Contradicting Its Own Stateless Claim**: Core's `get_adapter()` caches adapter instances for the process lifetime, keyed by `(engine, docs_root, repo_root)` — a real gap for a long-running MCP server process, since `docs_dir`, `repo_root`, and the declared `engine` rarely change, but adapter-internal settings the adapter reads at construction (e.g. `mkdocs.yml`'s `use_directory_urls`) can. `check_document` rebuilds everything else fresh per call but never cleared this one shared, inherited cache. Reproduced directly: two `check_document` calls in the same process, with `use_directory_urls` flipped in `mkdocs.yml` between them, returned the identical cached adapter with the stale value. Fixed by calling `clear_adapter_cache()` at the top of `check_document` — a safe, zero-cost change here specifically, since this function is the cache's only caller in the process and already has no legitimate cross-call reuse to protect. TDD-first: `tests/test_adapter_cache_staleness.py`, confirmed red before the fix, green after.
 
 ### Known Limitations
 
-- **Cache Invalidation (Invariant 3) Not Yet Designed**: `check_document` is currently fully
-  stateless — it builds a fresh `IncrementalAnalysisEngine` per call. The in-memory, cross-call
-  caching Invariant 3 describes is future work, deferred until a second Tool's requirements make
-  the right caching strategy clearer rather than guessing at it now with only one consumer.
+- **Cache Invalidation (Invariant 3) Not Yet Designed**: `check_document` is fully stateless — it
+  builds a fresh `IncrementalAnalysisEngine` per call, and no longer leaves Core's shared adapter
+  cache uncleared (see the Fixed entry above). The in-memory, cross-call caching Invariant 3
+  describes is still future work, deferred until a second Tool's requirements make the right
+  caching strategy clearer rather than guessing at it now with only one consumer.
 - **CLI/LSP Topology Divergence Inherited from Core**: `check_document` is built on
   `IncrementalAnalysisEngine`, which does not share a topology-detection algorithm with the
   CLI's `check_all` (`Z402` nav-based vs. `Z410`/`Z411` graph-based — see the Core repository's
