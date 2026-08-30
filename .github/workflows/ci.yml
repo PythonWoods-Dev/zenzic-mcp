@@ -1,0 +1,62 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+#
+# Runs the real pytest suite with coverage enforcement on every push/PR.
+# Previously the only CI workflow was `codeql.yml` (static security scanning) —
+# a regression in either test file could reach `main` undetected until this
+# workflow was added (V031_CI_COVERAGE_GATES_IMPLEMENTATION).
+#
+# `zenzic~=0.31` is resolved via `[tool.uv.sources]`'s `path = "../zenzic"`
+# (pyproject.toml) since v0.31.0 is not yet published to PyPI. That relative
+# path must resolve in CI too, so this workflow checks out `zenzic` Core as a
+# true sibling directory under the runner's workspace, then scopes every
+# subsequent step to `working-directory: zenzic-mcp`. Fixed to Core's `main`
+# branch — a simpler, bootstrap-appropriate choice than the full
+# branch-parity-with-fallback pattern `zenzic-action`/`zenzic-vscode` use.
+
+name: Zenzic MCP CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test & Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout zenzic-mcp
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: zenzic-mcp
+
+      - name: Checkout zenzic Core (sibling, for the local `../zenzic` uv source)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: PythonWoods-Dev/zenzic
+          ref: main
+          path: zenzic
+
+      - name: Install just
+        uses: taiki-e/install-action@ea85faa6acd705ad6d40586db99f1a70b09c2929 # just
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Sync dependencies
+        working-directory: zenzic-mcp
+        run: uv sync --all-groups
+
+      - name: Run unit tests (coverage enforced, fail_under=75)
+        working-directory: zenzic-mcp
+        run: just test-cov

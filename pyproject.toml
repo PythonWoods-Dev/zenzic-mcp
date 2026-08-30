@@ -30,6 +30,7 @@ packages = ["src/zenzic_mcp"]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.24",
+    "pytest-cov>=5.0",
     "mypy>=1.13",
     "ruff>=0.8",
 ]
@@ -56,6 +57,28 @@ implicit_reexport = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+# Bootstrap-stage floor: real measured coverage at time of writing is 82.57%
+# with branch coverage counted (91 statements/18 branches, 13/6 missed —
+# `uv run pytest tests/ --cov=src/zenzic_mcp --cov-report=term-missing`).
+# Set with a ~7.5pt buffer below that, not at the ceiling, so small
+# legitimate additions don't immediately break CI; ratchet up as the test
+# suite and the 3-file `src/` surface both grow. Mirrors the Core
+# repository's own `fail_under` precedent (`../zenzic/pyproject.toml`).
+fail_under = 75
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
 
 [tool.uv.sources]
 # Local dev only: resolves the zenzic~=0.31 constraint above against the

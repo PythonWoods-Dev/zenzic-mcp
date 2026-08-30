@@ -31,6 +31,13 @@ see `.claude/state/01-manifest.md` for the versioning model.
 - **Secret Redaction Test (Invariant 2)**: `tests/test_secret_redaction.py` plants a known fake
   secret, drives the real MCP wire protocol end-to-end, and asserts the raw secret is absent from
   the full serialized `tools/call` response payload — not just from one field.
+- **CI Coverage Gate**: previously the only CI workflow (`codeql.yml`) never ran the test suite
+  at all — a regression in either test file could reach `main` undetected. Added `ci.yml`
+  (runs `just test-cov` on push/PR, checking out `zenzic` Core as a sibling directory so the
+  local `[tool.uv.sources]` path resolves in CI) plus a `justfile` (`test`/`test-cov`/`lint`/
+  `verify`, matching the sibling repos' recipe convention) and `pytest-cov` with
+  `fail_under = 75` in `pyproject.toml` — a bootstrap-stage floor with a real ~7.5pt buffer
+  below the measured 82.57% (branch coverage counted), not an aspirational number.
 
 ### Fixed
 
