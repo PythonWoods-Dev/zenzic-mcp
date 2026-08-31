@@ -21,7 +21,9 @@ test-cov *args:
 # Static checks: lint + type-check.
 lint:
     {{ runner }} ruff check .
+    {{ runner }} ruff format --check .
     {{ runner }} mypy src
+    {{ runner }} reuse lint
 
 # Full local gate: everything CI runs, in one command.
 verify: lint test-cov
