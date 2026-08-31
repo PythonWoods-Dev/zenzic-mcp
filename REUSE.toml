@@ -1,0 +1,17 @@
+version = 1
+
+[[annotations]]
+path = [
+  ".gitignore",
+  ".markdownlint.json",
+  "justfile",
+  "pyproject.toml",
+  "uv.lock",
+  "LICENSE",
+  "REUSE.toml",
+  "CHANGELOG.md",
+  "README.md",
+  "assets/**"
+]
+SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
+SPDX-License-Identifier = "Apache-2.0"
