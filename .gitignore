@@ -22,3 +22,4 @@ __pycache__/
 
 # Zenzic quality scores — derived local metadata
 .zenzic-score.json
+.zenzic-history.jsonl
