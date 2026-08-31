@@ -19,3 +19,6 @@ __pycache__/
 # uv.lock is committed (application lock file — do not ignore)
 
 .DS_Store
+
+# Zenzic quality scores — derived local metadata
+.zenzic-score.json
