@@ -12,13 +12,11 @@ see `.claude/state/01-manifest.md` for the versioning model.
 
 ## [Unreleased]
 
-
 ### Added
 
 - **Substantive README**: replaced the 20-line bootstrap stub with a real project page — the repo lockup and canonical positioning line used by the sibling repositories, an explicit pre-release status block, the full argument reference and documented behaviour of the single `check_document` Tool, install and MCP-client registration instructions, and an ecosystem table placing this server alongside the CLI, the GitHub Action and the VS Code extension as surfaces over one shared engine. Every capability statement traces to callable code in `src/zenzic_mcp/`; nothing describes planned work.
 - **Repository lockup assets** (`assets/zenzic-wordmark-mcp.svg`, `assets/zenzic-wordmark-mcp-dark.svg`): derived from `zenzic-action`'s wordmark so the geometry, type scale, palette and dark-mode pairing match the family exactly. Only the suffix word and the internal clip/mask identifiers differ.
 - **`.markdownlint.json`** copied verbatim from Zenzic Core, and **`REUSE.toml`** plus **`LICENSES/Apache-2.0.txt`**, which also close a pre-existing `reuse lint` failure on `uv.lock` and the absent `LICENSES` directory.
-### Added
 
 - **Repository Bootstrap**: initial `pyproject.toml` (`v0.1.0`), with `zenzic~=0.31` as a
   Track-2 project dependency (resolved locally via `[tool.uv.sources]` to the sibling `../zenzic`
