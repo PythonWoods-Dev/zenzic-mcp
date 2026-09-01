@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+
+# Segregate stage execution: linters run at commit-time only.
+# The just-verify Final Guard runs at push-time only (stages: [pre-push]).
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b  # v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-json
+      - id: check-toml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 25a8c8da6c24a3b9a1a536e2674683dd0eead5d6  # v0.11.2
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  - repo: https://github.com/fsfe/reuse-tool
+    rev: 9fabf9eb815a57aac116b435e8346c200cdb8604  # v6.2.0
+    hooks:
+      - id: reuse
+
+  # Pre-push Final Guard (lifecycle gate model)
+  # Single entry-point: local ≡ remote. The same `just verify` runs in GHA.
+  # Install with: uvx pre-commit install -t pre-push
+  - repo: local
+    hooks:
+      - id: just-verify
+        name: 🛡️ Zenzic-MCP Final Guard (just verify)
+        entry: just verify
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true

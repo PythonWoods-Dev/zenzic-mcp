@@ -43,9 +43,7 @@ def _current_use_directory_urls(repo_root: Path) -> bool:
 def test_check_document_does_not_serve_a_stale_adapter_across_calls(tmp_path: Path) -> None:
     """A real mkdocs.yml edit between two check_document() calls in the same
     process must be reflected on the second call, not silently ignored."""
-    (tmp_path / ".zenzic.toml").write_text(
-        '[build_context]\nengine = "mkdocs"\n', encoding="utf-8"
-    )
+    (tmp_path / ".zenzic.toml").write_text('[build_context]\nengine = "mkdocs"\n', encoding="utf-8")
     (tmp_path / "mkdocs.yml").write_text(
         "site_name: Test\nuse_directory_urls: true\n", encoding="utf-8"
     )

@@ -28,18 +28,6 @@
 
 ---
 
-## ⚠️ Status: Pre-Release
-
-**This project is in development and has had no release.** The version is `0.1.0`, no tag has
-been published, and the tool surface below is deliberately small — one Tool. Treat the
-interface as unstable: names, arguments, and response shapes may change without a deprecation
-period until a `1.0.0` exists.
-
-Everything documented on this page is implemented and callable today. Nothing here describes
-planned work.
-
----
-
 ## What This Is
 
 [Zenzic](https://github.com/PythonWoods/zenzic) analyses Markdown documentation as a graph:
@@ -53,34 +41,15 @@ the analyser's own structured diagnostics.
 
 ---
 
-## Tools
+## ⚠️ Status: Pre-Release
 
-### `check_document`
+**This project is in development and has had no release.** The version is `0.1.0`, no tag has
+been published, and the tool surface described below is deliberately small — one Tool. Treat
+the interface as unstable: names, arguments, and response shapes may change without a
+deprecation period until a `1.0.0` exists.
 
-Runs a full Zenzic quality and security check on **one** Markdown document and returns its
-findings.
-
-| Argument | Type | Required | Meaning |
-| :--- | :--- | :---: | :--- |
-| `repo_root` | string | yes | Absolute path to the repository root containing `.zenzic.toml`. |
-| `path` | string | yes | The Markdown file to check — absolute, or relative to `repo_root`. |
-
-Returns one line per finding, `line:column  [CODE]  message`, or `No findings.` when the
-document is clean. Unknown tools, missing arguments, a path that is not a tracked Markdown
-file, and unexpected engine failures all return a normal error result rather than propagating
-past the protocol boundary.
-
-Two behaviours are worth knowing because they are deliberate:
-
-- **Whole-repository analysis, single-document response.** The server performs a full workspace
-  sync before answering, because cross-file findings — dangling references, orphan pages,
-  topology — cannot be computed from one file in isolation. It then returns diagnostics for the
-  requested file only, never the full per-URI map of the site.
-- **No cached state between calls.** Zenzic Core keeps a process-lifetime adapter cache; this
-  server clears it on every call. A long-running server would otherwise keep answering from an
-  adapter built against a `mkdocs.yml` or `.zenzic.toml` that has since changed.
-
-That is the entire tool surface. There are no resources or prompts.
+Everything documented on this page is implemented and callable today. Nothing here describes
+planned work.
 
 ---
 
@@ -118,6 +87,37 @@ Consult your client's own documentation for where that configuration lives.
 
 ---
 
+## Tools
+
+### `check_document`
+
+Runs a full Zenzic quality and security check on **one** Markdown document and returns its
+findings.
+
+| Argument | Type | Required | Meaning |
+| :--- | :--- | :---: | :--- |
+| `repo_root` | string | yes | Absolute path to the repository root containing `.zenzic.toml`. |
+| `path` | string | yes | The Markdown file to check — absolute, or relative to `repo_root`. |
+
+Returns one line per finding, `line:column  [CODE]  message`, or `No findings.` when the
+document is clean. Unknown tools, missing arguments, a path that is not a tracked Markdown
+file, and unexpected engine failures all return a normal error result rather than propagating
+past the protocol boundary.
+
+Two behaviours are worth knowing because they are deliberate:
+
+- **Whole-repository analysis, single-document response.** The server performs a full workspace
+  sync before answering, because cross-file findings — dangling references, orphan pages,
+  topology — cannot be computed from one file in isolation. It then returns diagnostics for the
+  requested file only, never the full per-URI map of the site.
+- **No cached state between calls.** Zenzic Core keeps a process-lifetime adapter cache; this
+  server clears it on every call. A long-running server would otherwise keep answering from an
+  adapter built against a `mkdocs.yml` or `.zenzic.toml` that has since changed.
+
+That is the entire tool surface. There are no resources or prompts.
+
+---
+
 ## Relationship to Zenzic
 
 Zenzic separates one analysis engine from the surfaces that apply it. The engine and the
@@ -129,7 +129,7 @@ enforcement reaches you through whichever surface fits the moment:
 | [`zenzic`](https://github.com/PythonWoods/zenzic) | The CLI, and the engine every surface below shares. |
 | [`zenzic-action`](https://github.com/PythonWoods/zenzic-action) | In CI, as a merge gate on the pull request. |
 | [`zenzic-vscode`](https://github.com/PythonWoods/zenzic-vscode) | In the editor, at the keystroke. |
-| **`zenzic-mcp`** | To LLM agents, over the Model Context Protocol. |
+| **`zenzic-mcp`** | To LLM agents, over MCP. |
 
 Each is a thin client over the same engine, so a finding means the same thing wherever you
 meet it. `zenzic-mcp` is versioned independently of Core; it declares `zenzic~=0.31` as a
