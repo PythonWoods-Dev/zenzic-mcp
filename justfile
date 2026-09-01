@@ -19,6 +19,18 @@ test-cov *args:
     {{ runner }} pytest --cov=src/zenzic_mcp --cov-report=term-missing {{ args }}
 
 # Static checks: lint + type-check.
+# `[tool.uv.sources]` in pyproject.toml points the zenzic constraint at the
+# sibling checkout, so this yields an editable Core install for local work.
+# The hook install is part of setup rather than a step to remember: this
+# repository was once found with no hooks installed at all, the precondition
+# Rule 31 blocks on. Running setup makes that self-healing.
+#
+# Bootstrap a fresh clone: install dependencies and git hooks.
+setup:
+    uv sync --all-groups
+    uvx pre-commit install -t pre-commit -t pre-push
+    @echo "Setup complete. Run 'just verify' to check everything passes."
+
 lint:
     {{ runner }} ruff check .
     {{ runner }} ruff format --check .
