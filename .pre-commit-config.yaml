@@ -32,6 +32,16 @@ repos:
     hooks:
       - id: reuse
 
+  # Markdown linting. `.markdownlint.json` already existed (the VS Code
+  # extension reads it, so squiggles appear in the editor) but nothing ran
+  # it as a gate -- a violation could land with no pre-commit, CI, or justfile
+  # step ever blocking it. Pin matches zenzic core's exact rev for one
+  # canonical markdownlint-cli version across the ecosystem.
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: f295829140d25717bc79368d3f966fc1f67a824f  # v0.41.0
+    hooks:
+      - id: markdownlint
+
   # Pre-push Final Guard (lifecycle gate model)
   # Single entry-point: local ≡ remote. The same `just verify` runs in GHA.
   # Install with: uvx pre-commit install -t pre-push
