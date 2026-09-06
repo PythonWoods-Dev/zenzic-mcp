@@ -22,8 +22,8 @@ test-cov *args:
 # `[tool.uv.sources]` in pyproject.toml points the zenzic constraint at the
 # sibling checkout, so this yields an editable Core install for local work.
 # The hook install is part of setup rather than a step to remember: this
-# repository was once found with no hooks installed at all, the precondition
-# Rule 31 blocks on. Running setup makes that self-healing.
+# repository was once found with no hooks installed at all, a precondition
+# this now blocks on. Running setup makes that self-healing.
 #
 # Bootstrap a fresh clone: install dependencies and git hooks.
 setup:
@@ -82,7 +82,7 @@ _check-hooks:
     done
     if [ "${_missing}" -ne 0 ]; then
         echo ""
-        echo "Refusing to continue with an uninstalled git hook. See Rule 31."
+        echo "Refusing to continue with an uninstalled git hook."
         exit 1
     fi
     echo "git hooks installed (pre-commit, pre-push)"
