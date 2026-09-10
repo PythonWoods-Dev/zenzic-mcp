@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
-# Internal workspace — never commit to version control (same rationale as
-# the sibling repositories)
+# Local tooling and working notes — not published
 .claude/
 .human/
 

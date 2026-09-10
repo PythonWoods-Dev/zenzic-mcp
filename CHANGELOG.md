@@ -5,7 +5,8 @@
 
 All notable changes to `zenzic-mcp` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-Versions follow [Semantic Versioning](https://semver.org/), independently from Zenzic Core.
+Versions follow [Semantic Versioning](https://semver.org/), independently from Zenzic Core:
+this server's version tracks its own MCP surface, not the engine's release number.
 
 ---
 
