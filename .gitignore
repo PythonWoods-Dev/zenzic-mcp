@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
-# AI Control Plane — never commit to version control (Zero-Leak Governance,
-# same rationale as ../zenzic)
+# Local tooling and working notes — not published
 .claude/
 .human/
 
