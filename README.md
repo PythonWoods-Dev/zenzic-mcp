@@ -30,7 +30,7 @@
 
 ## What This Is
 
-[Zenzic](https://github.com/PythonWoods/zenzic) analyses Markdown documentation as a graph:
+[Zenzic](https://github.com/PythonWoods/zenzic) analyses Markdown and MDX documentation as a graph:
 it resolves every link, anchor, and asset reference across a whole docs tree without building
 the site, and scans source for leaked credentials. `zenzic-mcp` puts that engine behind a
 [Model Context Protocol](https://modelcontextprotocol.io/) server so an LLM agent can ask it
