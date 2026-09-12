@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.mypy-type-checker",
+    "charliermarsh.ruff",
+    "davidanson.vscode-markdownlint"
+  ],
+  "unwantedRecommendations": [
+    "ms-python.black-formatter"
+  ]
+}

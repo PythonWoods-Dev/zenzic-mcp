@@ -124,9 +124,7 @@ def check_document(repo_root: Path, target: Path) -> list[ZenzicDiagnostic]:
     if not target.is_file() or target not in set(
         iter_markdown_sources(docs_root, config, exclusion_mgr)
     ):
-        raise DocumentNotFoundError(
-            f"{target} is not a tracked Markdown file under {docs_root}"
-        )
+        raise DocumentNotFoundError(f"{target} is not a tracked Markdown file under {docs_root}")
 
     md_contents: dict[Path, str] = {}
     for md_file in iter_markdown_sources(docs_root, config, exclusion_mgr):
