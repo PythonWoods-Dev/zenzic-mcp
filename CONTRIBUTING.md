@@ -46,6 +46,15 @@ condition that changes it**: the first time a version of this server is publishe
 the pin becomes a promise to a user rather than a note to a developer, and it needs
 both recipes plus a check that the three agree.
 
+## Where these rules live
+
+Every requirement below is imposed by this repository's **ruleset** — GitHub's current
+branch-protection mechanism — and not by the older per-branch protection API, which
+declares nothing here and is not used anywhere in this ecosystem. If you are looking for
+why a push was refused, the ruleset is the only place to look:
+`gh api repos/PythonWoods-Dev/zenzic-mcp/rules/branches/main` lists exactly the rules
+that apply to you.
+
 ## Commit requirements
 
 Both of these are enforced by CI on every pull request, not merely requested:
