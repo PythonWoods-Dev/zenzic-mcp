@@ -74,7 +74,6 @@ have a ruleset yet, which is a gap rather than a difference — see below.
 
 | Gap | Status |
 | :--- | :--- |
-| No repository ruleset, `main` unprotected | **Open.** Every sibling requires signed commits, linear history and a pull request on its default branch. This repository requires none of them, so a direct push to `main` would succeed. Tracked for correction. |
 | No `RELEASE.md` | **Deliberate.** Nothing has been released. It becomes required at the first published version. |
 | No secret-scanning workflow | **Open.** Three of four repositories run one. |
 
