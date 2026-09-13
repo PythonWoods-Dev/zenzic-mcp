@@ -30,7 +30,7 @@
 
 ## What This Is
 
-[Zenzic](https://github.com/PythonWoods/zenzic) analyses Markdown and MDX documentation as a graph:
+[Zenzic](https://github.com/PythonWoods-Dev/zenzic) analyses Markdown and MDX documentation as a graph:
 it resolves every link, anchor, and asset reference across a whole docs tree without building
 the site, and scans source for leaked credentials. `zenzic-mcp` puts that engine behind a
 [Model Context Protocol](https://modelcontextprotocol.io/) server so an LLM agent can ask it
@@ -121,14 +121,14 @@ That is the entire tool surface. There are no resources or prompts.
 ## Relationship to Zenzic
 
 Zenzic separates one analysis engine from the surfaces that apply it. The engine and the
-documentation defining its rules live together in [`zenzic`](https://github.com/PythonWoods/zenzic);
+documentation defining its rules live together in [`zenzic`](https://github.com/PythonWoods-Dev/zenzic);
 enforcement reaches you through whichever surface fits the moment:
 
 | Surface | Where it applies the rules |
 | :--- | :--- |
-| [`zenzic`](https://github.com/PythonWoods/zenzic) | The CLI, and the engine every surface below shares. |
-| [`zenzic-action`](https://github.com/PythonWoods/zenzic-action) | In CI, as a merge gate on the pull request. |
-| [`zenzic-vscode`](https://github.com/PythonWoods/zenzic-vscode) | In the editor, at the keystroke. |
+| [`zenzic`](https://github.com/PythonWoods-Dev/zenzic) | The CLI, and the engine every surface below shares. |
+| [`zenzic-action`](https://github.com/PythonWoods-Dev/zenzic-action) | In CI, as a merge gate on the pull request. |
+| [`zenzic-vscode`](https://github.com/PythonWoods-Dev/zenzic-vscode) | In the editor, at the keystroke. |
 | **`zenzic-mcp`** | To LLM agents, over MCP. |
 
 Each is a thin client over the same engine, so a finding means the same thing wherever you
