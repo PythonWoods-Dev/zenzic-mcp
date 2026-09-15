@@ -11,9 +11,9 @@ Fixes #
 - [ ] Bug fix (non-breaking change fixing an issue)
 - [ ] New feature (non-breaking change adding functionality)
 - [ ] Breaking change (fix or feature breaking backward compatibility)
-- [ ] Documentation / D.I.A. update
+- [ ] Documentation update
 - [ ] Refactoring / Tech Debt removal
-- [ ] Performance optimization
+- [ ] CI/CD workflow improvement
 
 ## Governance & Compliance Checklist
 
@@ -23,9 +23,9 @@ Fixes #
 - [ ] **Commit Standards:** Commit messages strictly follow the Conventional Commits specification.
 - [ ] **Absolute Ownership:** I have verified and can architecturally justify every single line of code. No unreviewed AI-generated code is included.
 
-## Architectural Quality Gates (Core Python)
+## Quality Gates
 
-- [ ] **Mirror Law:** I have updated all 10 mandatory targets (including the zenzic init template in templates.py and the VS Code IntelliSense schema in zenzic.schema.json) if adding or modifying a rule.
-- [ ] **Local Quality Pipeline:** `just verify` (or `pytest tests/` + `zenzic check all --strict`) passes with 100% test pass rate and no DQS regression.
-- [ ] **Zero Subprocess & Determinism:** No unauthorized subprocess executions, shell wrappers, or non-deterministic file I/O are introduced into the core analysis engine.
-- [ ] **Custom Rule SDK v3:** If modifying the SDK or rule extensions, changes maintain backward compatibility with `ZenzicRuleV3`.
+- [ ] **Local Pipeline:** `just verify` (lint + test-cov) passes without errors.
+- [ ] **Coverage:** New code paths carry tests; the coverage gate is not lowered to accommodate them.
+- [ ] **Engine Pinning:** The `zenzic` constraint and `[tool.uv.sources]` are unchanged, or the change is justified in the description.
+- [ ] **Protocol Surface:** Any change to a tool's name, arguments or return shape is called out explicitly — MCP clients bind to those.
