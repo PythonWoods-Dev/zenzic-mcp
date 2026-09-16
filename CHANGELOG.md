@@ -43,6 +43,16 @@ this server's version tracks its own MCP surface, not the engine's release numbe
   `fail_under = 75` in `pyproject.toml` — a bootstrap-stage floor with a real ~7.5pt buffer
   below the measured 82.57% (branch coverage counted), not an aspirational number.
 
+### Changed
+
+- **`check_document` inherits three engine changes from `zenzic~=0.31`**: a page declared by
+  `exclude_docs` or `draft_docs` in `mkdocs.yml` is no longer analysed — it is absent from the built
+  site, so a quality finding about it describes a page no reader can reach. `draft_docs` follows
+  `mkdocs build` rather than `mkdocs serve`. A pattern in those keys (or `not_in_nav`) that cannot be
+  parsed now returns `Z407` instead of being ignored, and no longer aborts the call. Credential
+  findings are unaffected in every case. A client caching results per document should expect fewer
+  findings on excluded pages after the dependency resolves to the new engine.
+
 ### Fixed
 
 - **Missing `LICENSE` File**: `pyproject.toml` already declared `license = "Apache-2.0"`, but no `LICENSE` file existed in the repository, unlike the sibling `zenzic`/`zenzic-action`/`zenzic-vscode` repos. Added the standard Apache-2.0 text with matching copyright line.
