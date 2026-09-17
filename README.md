@@ -133,7 +133,10 @@ enforcement reaches you through whichever surface fits the moment:
 
 Each is a thin client over the same engine, so a finding means the same thing wherever you
 meet it. `zenzic-mcp` is versioned independently of Core; it declares `zenzic~=0.31` as a
-dependency.
+dependency. That line of Core is not on PyPI yet: from a checkout, `uv sync` resolves it against
+a sibling `../zenzic` checkout (`[tool.uv.sources]` in `pyproject.toml`), which is the only way to
+run this server until v0.31.0 is released. The rules themselves are documented at
+[zenzic.dev](https://zenzic.dev).
 
 ---
 
