@@ -22,6 +22,7 @@ from zenzic.core.adapters._factory import clear_adapter_cache
 from zenzic.core.codes import NON_SUPPRESSIBLE_CODES
 from zenzic.core.discovery import iter_markdown_sources
 from zenzic.core.exclusion import LayeredExclusionManager
+from zenzic.core.extensions import container_pattern
 from zenzic.core.incremental import IncrementalAnalysisEngine
 from zenzic.core.scanner import _build_rule_engine
 from zenzic.models.config import ZenzicConfig
@@ -137,7 +138,14 @@ def check_document(repo_root: Path, target: Path) -> list[ZenzicDiagnostic]:
     vsm = build_vsm(adapter, docs_root, md_contents, repo_root=repo_root)
     overlay = VirtualBufferOverlay(vsm)
 
-    rule_engine = _build_rule_engine(config)
+    # The adapter is already built one line above, so the run's container
+    # vocabulary costs one config read rather than a second construction.
+    # Without it the MCP surface would read every project's Markdown with the
+    # default four-marker vocabulary, disagreeing with `zenzic check` on any
+    # project that does not enable all four extensions.
+    rule_engine = _build_rule_engine(
+        config, containers=container_pattern(adapter.get_enabled_extensions())
+    )
     if rule_engine is None:
         return []
 
