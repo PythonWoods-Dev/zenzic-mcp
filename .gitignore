@@ -19,6 +19,12 @@ __pycache__/
 
 .DS_Store
 
+# Zenzic runtime artefacts — written by `just check`, never committed.
+# The engine writes this cache on every run; it appeared untracked the first
+# time this repository was configured (2026-09-18).
+.zenzic_cache/
+.zenzic.local.toml
+
 # Zenzic quality scores — derived local metadata
 .zenzic-score.json
 .zenzic-history.jsonl
