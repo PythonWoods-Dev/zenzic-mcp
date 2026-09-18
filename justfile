@@ -38,7 +38,16 @@ lint:
     {{ runner }} reuse lint
 
 # Full local gate: everything CI runs, in one command.
-verify: _check-hooks lint test-cov
+# `check` runs the engine this project depends on over this project's own
+# Markdown. It costs nothing to install -- `zenzic~=0.31` is already a
+# dependency, resolved from the sibling checkout -- and until 2026-09-18 this
+# repository had no Zenzic configuration at all, so its five Markdown files were
+# analysed by nothing. A configuration nothing runs is the uninvoked-mechanism
+# shape; this recipe is what runs it.
+check:
+    uv run zenzic check all --strict --no-header
+
+verify: _check-hooks lint test-cov check
 
 # Blocking gate, not a warning. A pre-commit hook that is merely declared in
 # .pre-commit-config.yaml runs nothing: the hook has to be installed into

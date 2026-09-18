@@ -1,0 +1,63 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+#
+# Zenzic — zenzic-mcp
+# ---------------------------------------------------------------------------
+# Written 2026-09-18. Until then this repository had no Zenzic configuration at
+# all, so `zenzic check all` answered `Z906 NO_FILES_FOUND — Audit skipped` and
+# its Markdown was analysed by nothing — including a README this cycle corrected
+# twice by hand.
+#
+# This is NOT a copy of the core's configuration. The core has a documentation
+# tree (`docs_dir = "docs"`, 300+ pages, a nav, an MkDocs adapter). This
+# repository is a protocol surface: five Markdown files at the root, no docs/,
+# no site. The settings below follow from that difference and nothing else.
+
+# docs_dir — the root, because that is where this project's Markdown lives.
+#
+# `docs_dir = "."` carries a known open defect (priority table, 2026-09-14): the
+# MkDocs adapter registers every page under two path roots and reports every
+# finding twice. Measured here before choosing: that defect is **adapter-
+# specific**. With `engine = "standalone"` the scan reports 6 pages for the 6
+# Markdown files it includes and each finding once — no doubling. A satellite is
+# not the place to exercise a known open defect, and this combination does not.
+docs_dir = "."
+
+strict = true
+
+# fail_under = 100 - suppression_cap, the relation the generated configuration
+# states. With no suppressions declared the cap is 0, so the floor is 100 — and
+# the score is measured below, not predicted.
+fail_under = 100
+
+# --- PERIMETER ---
+# Measured with `docs_dir = "."` and no exclusions: two `Z405` findings, on
+# `LICENSES/Apache-2.0.txt` and `src/zenzic_mcp/py.typed`. Neither is a defect —
+# both are files that are not documentation and are correctly referenced by
+# nothing. The perimeter says so; a suppression would have said the finding is
+# wrong, which it is not.
+excluded_dirs = [
+    "LICENSES",        # REUSE licence texts — legal files, not documentation
+    "src",             # the server's Python package, including py.typed
+    "scripts",         # developer tooling, with a README addressed to maintainers
+    "tests",           # fixtures and test data
+    ".github",         # issue and pull-request templates, not published pages
+]
+
+[governance]
+# No suppression is declared, and none is needed: the perimeter below excludes
+# what is not documentation rather than silencing findings about it. Writing a
+# suppression pair to quiet a false positive the perimeter should exclude is the
+# workaround this cycle has refused throughout.
+suppression_cap = 0
+suppression_cap_fail_hard = true
+
+[build_context]
+# standalone: there is no site generator here. No mkdocs.yml, no nav, no build.
+engine         = "standalone"
+base_url       = "/"
+default_locale = "en"
+
+
+[project_metadata]
+name = "zenzic-mcp"
