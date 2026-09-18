@@ -22,7 +22,7 @@ from zenzic.core.adapters._factory import clear_adapter_cache
 from zenzic.core.codes import NON_SUPPRESSIBLE_CODES
 from zenzic.core.discovery import iter_markdown_sources
 from zenzic.core.exclusion import LayeredExclusionManager
-from zenzic.core.extensions import container_pattern
+from zenzic.core.extensions import container_pattern, tab_anchor_style
 from zenzic.core.incremental import IncrementalAnalysisEngine
 from zenzic.core.scanner import _build_rule_engine
 from zenzic.models.config import ZenzicConfig
@@ -136,7 +136,9 @@ def check_document(repo_root: Path, target: Path) -> list[ZenzicDiagnostic]:
 
     adapter = get_adapter(config.build_context, docs_root, repo_root)
     vsm = build_vsm(adapter, docs_root, md_contents, repo_root=repo_root)
-    overlay = VirtualBufferOverlay(vsm)
+    # The MCP surface must resolve a link to a content tab the way `zenzic check`
+    # does; both read the style from the same adapter.
+    overlay = VirtualBufferOverlay(vsm, tabs=tab_anchor_style(adapter.get_enabled_extensions()))
 
     # The adapter is already built one line above, so the run's container
     # vocabulary costs one config read rather than a second construction.
