@@ -135,7 +135,12 @@ def check_document(repo_root: Path, target: Path) -> list[ZenzicDiagnostic]:
             continue
 
     adapter = get_adapter(config.build_context, docs_root, repo_root)
-    vsm = build_vsm(adapter, docs_root, md_contents, repo_root=repo_root)
+    # `extra_mounts` rather than `repo_root`: `build_vsm()` performs no I/O as of
+    # Core v0.31.0, so the caller computes the mounts. This surface declares no
+    # external content roots, and passing an empty list says that deliberately
+    # rather than by omission — a project with a locale tree or a monorepo
+    # content root is not reached from here, which was already true.
+    vsm = build_vsm(adapter, docs_root, md_contents, extra_mounts=[])
     # The MCP surface must resolve a link to a content tab the way `zenzic check`
     # does; both read the style from the same adapter.
     overlay = VirtualBufferOverlay(vsm, tabs=tab_anchor_style(adapter.get_enabled_extensions()))
