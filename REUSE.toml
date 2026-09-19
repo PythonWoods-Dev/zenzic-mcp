@@ -3,6 +3,7 @@ version = 1
 [[annotations]]
 path = [
   ".gitignore",
+  ".zenzic-core-ref",
   ".markdownlint.json",
   "justfile",
   "pyproject.toml",

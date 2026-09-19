@@ -28,18 +28,68 @@ permissions:
 jobs:
   test:
     name: Test & Coverage
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout zenzic-mcp
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: zenzic-mcp
 
+      # `ref: main` was hardcoded here until 2026-09-18. It made this job type-check
+      # against a core that predates whatever branch the satellite's source targets,
+      # so a commit correct against the sibling checkout on disk failed in CI with
+      # "BaseAdapter has no attribute get_enabled_extensions" -- an API that exists,
+      # on the branch this repository is developed against. `zenzic-vscode` has had
+      # the declaration mechanism since the same class of failure hit it; this is
+      # that mechanism, not a new one.
+      - name: Determine Zenzic Core Branch (Explicit Declaration, Override, or Main)
+        id: resolve-branch
+        shell: bash
+        working-directory: zenzic-mcp
+        env:
+          ZENZIC_CORE_REF: ${{ vars.ZENZIC_CORE_REF }}
+        run: |
+          # Priority 1: repo-variable override -- an ad-hoc escape hatch for a
+          # single investigation, not meant to be left set.
+          if [[ -n "${ZENZIC_CORE_REF:-}" ]]; then
+            echo "Explicit core ref override (repo variable ZENZIC_CORE_REF): $ZENZIC_CORE_REF"
+            echo "core_ref=$ZENZIC_CORE_REF" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Priority 2: a committed declaration that this branch depends on a
+          # specific core ref. A declaration that names a ref which does not
+          # exist is an error rather than a silent fall back to main: falling
+          # back silently is the failure this file exists to prevent.
+          if [[ -f ".zenzic-core-ref" ]]; then
+            DECLARED_REF="$(tr -d '[:space:]' < .zenzic-core-ref)"
+            if [[ -z "$DECLARED_REF" ]]; then
+              echo "::error::.zenzic-core-ref exists but is empty. Put a real zenzic branch/tag name in it, or delete the file to use main."
+              exit 1
+            fi
+            if git ls-remote --exit-code --heads --tags https://github.com/PythonWoods-Dev/zenzic.git "$DECLARED_REF" > /dev/null 2>&1; then
+              echo "Declared core ref (.zenzic-core-ref): $DECLARED_REF -- found in core, using it."
+              echo "core_ref=$DECLARED_REF" >> $GITHUB_OUTPUT
+            else
+              echo "::error::.zenzic-core-ref declares '$DECLARED_REF', but no matching branch or tag exists in PythonWoods-Dev/zenzic."
+              exit 1
+            fi
+            exit 0
+          fi
+
+          # No declaration and no override: main is the ordinary default.
+          echo "No .zenzic-core-ref declaration and no ZENZIC_CORE_REF override -- using zenzic's main."
+          echo "core_ref=main" >> $GITHUB_OUTPUT
+
       - name: Checkout zenzic Core (sibling, for the local `../zenzic` uv source)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: PythonWoods-Dev/zenzic
-          ref: main
+          ref: ${{ steps.resolve-branch.outputs.core_ref }}
           path: zenzic
 
       - name: Install just
@@ -56,6 +106,10 @@ jobs:
       - name: Sync dependencies
         working-directory: zenzic-mcp
         run: uv sync --all-groups
+
+      - name: Lint, format check, types and licences
+        working-directory: zenzic-mcp
+        run: just lint
 
       - name: Run unit tests (coverage enforced, fail_under=75)
         working-directory: zenzic-mcp
