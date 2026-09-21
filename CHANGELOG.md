@@ -5,8 +5,8 @@
 
 All notable changes to `zenzic-mcp` are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-Versions follow [Semantic Versioning](https://semver.org/), independently from Zenzic Core —
-see `.claude/state/01-manifest.md` for the versioning model.
+Versions follow [Semantic Versioning](https://semver.org/), independently from Zenzic Core:
+this server's version tracks its own MCP surface, not the engine's release number.
 
 ---
 
@@ -42,6 +42,16 @@ see `.claude/state/01-manifest.md` for the versioning model.
   `verify`, matching the sibling repos' recipe convention) and `pytest-cov` with
   `fail_under = 75` in `pyproject.toml` — a bootstrap-stage floor with a real ~7.5pt buffer
   below the measured 82.57% (branch coverage counted), not an aspirational number.
+
+### Changed
+
+- **`check_document` inherits three engine changes from `zenzic~=0.31`**: a page declared by
+  `exclude_docs` or `draft_docs` in `mkdocs.yml` is no longer analysed — it is absent from the built
+  site, so a quality finding about it describes a page no reader can reach. `draft_docs` follows
+  `mkdocs build` rather than `mkdocs serve`. A pattern in those keys (or `not_in_nav`) that cannot be
+  parsed now returns `Z407` instead of being ignored, and no longer aborts the call. Credential
+  findings are unaffected in every case. A client caching results per document should expect fewer
+  findings on excluded pages after the dependency resolves to the new engine.
 
 ### Fixed
 

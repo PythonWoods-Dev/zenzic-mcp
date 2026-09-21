@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+
+# Absent until 2026-09-12, which meant this repository had never received a single
+# dependency pull request. Its backlog was unknown rather than empty.
+version: 2
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    ignore:
+      # The core is resolved from a sibling checkout during development and its pin
+      # is a promise to a user only once this server is published. Bump it by hand,
+      # together with the release, or not at all.
+      - dependency-name: "zenzic"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
