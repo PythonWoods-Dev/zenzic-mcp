@@ -134,7 +134,7 @@ how your generator turns a source file into a URL. Four adapters cover that:
 Astro and Docusaurus are named because both were measured against real
 repositories. A generator Zenzic has not been run against is not listed.
 
-[Configure an adapter](https://zenzic.dev/how-to/configure-adapter/)
+[Configure an adapter](https://zenzic.dev/how-to/configure-adapter/) · [Tested versions and verification method](https://zenzic.dev/reference/compatibility/)
 
 ---
 
