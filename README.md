@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <a href="https://opensource.org/licenses/Apache-2.0">
+  <a href="https://opensource.org/license/Apache-2.0">
     <img src="https://img.shields.io/badge/license-Apache--2.0-0d9488?style=flat-square" alt="License">
   </a>
   <img src="https://img.shields.io/badge/status-pre--release-f59e0b?style=flat-square" alt="Status: pre-release">
